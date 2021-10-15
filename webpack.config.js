@@ -7,6 +7,18 @@ module.exports = {
     module: {
         rules: [
             {
+                test: /RecorderWorklet\.ts$/,
+                type: "javascript/auto",
+                use: [
+                    {
+                        loader: "worklet-loader",
+                    },
+                    {
+                        loader: "babel-loader",
+                    },
+                ],
+            },
+            {
                 test: /\.worker\.ts$/,
                 loader: "worker-loader",
             },
