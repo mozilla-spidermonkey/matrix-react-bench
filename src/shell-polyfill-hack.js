@@ -19,7 +19,12 @@ globalThis.EventTarget = class {
     addEventListener() { }
     removeEventListener() { }
 };
-globalThis.Node = class extends globalThis.EventTarget { };
+globalThis.Node = class extends globalThis.EventTarget {
+    static DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC = 32;
+    compareDocumentPosition(otherNode) {
+        return otherNode.DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC;
+    }
+};
 globalThis.Element = class extends globalThis.Node {
     setAttribute() { }
     get classList() {
@@ -29,6 +34,9 @@ globalThis.Element = class extends globalThis.Node {
     }
     get style() {
         return {};
+    }
+    get children() {
+        return [];
     }
 };
 globalThis.HTMLElement = class extends globalThis.Element { };
@@ -77,5 +85,14 @@ console.warn = console.log;
 
 // Replacement for matrix-react-sdk/src/Skinner.ts logic
 globalThis.mxSkinner = {
-    getComponent(name) { return null; }
+    _components: {},
+    addComponent(name, value) {
+        this._components[name] = value;
+    },
+    getComponent(name) {
+        if (name in this._components) {
+            return this._components[name];
+        }
+        return null;
+    }
 };
