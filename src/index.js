@@ -1,11 +1,11 @@
 import { } from "./shell-polyfill-hack.js";
+import { } from "./load-skin.js";
+import DumpDOMTree from "./dump-tree.js";
 
 import { EventEmitter } from "events";
 
 import React from "react";
-import * as ReactTestRenderer from "react-test-renderer";
-
-import { } from "matrix-react-sdk/src/component-index";
+import ReactDOM from "react-dom";
 
 import { MatrixClientPeg } from "matrix-react-sdk/src/MatrixClientPeg";
 import { Room } from "matrix-js-sdk/src/models/room";
@@ -17,10 +17,6 @@ import * as ContentHelpers from 'matrix-js-sdk/src/content-helpers';
 import MatrixClientContext from "matrix-react-sdk/src/contexts/MatrixClientContext";
 import RoomContext from "matrix-react-sdk/src/contexts/RoomContext";
 import TimelinePanel from "matrix-react-sdk/src/components/structures/TimelinePanel";
-import MessageEvent from "matrix-react-sdk/src/components/views/messages/MessageEvent";
-
-// Hack around the skinner
-globalThis.mxSkinner.addComponent("messages.MessageEvent", MessageEvent);
 
 
 class FakeMatrixClient extends EventEmitter {
@@ -62,13 +58,12 @@ let props = {
     eventId: event_id,
 };
 
-function createNodeMock(element) {
-    return new globalThis.Element;
-}
-
 let elem = React.createElement(TimelinePanel, props, null);
 elem = React.createElement(RoomContext.Provider, { value: {} }, elem);
 elem = React.createElement(MatrixClientContext.Provider, { value: client }, elem);
 
-let rendered = ReactTestRenderer.create(elem, { createNodeMock });
-console.log(JSON.stringify(rendered.toJSON(), null, 2));
+let target = document.createElement("div");
+document.body.appendChild(target);
+ReactDOM.render(elem, target);
+
+DumpDOMTree(target);
