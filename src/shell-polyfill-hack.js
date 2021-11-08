@@ -14,7 +14,7 @@ globalThis.removeEventListener = () => null;
 globalThis.XMLHttpRequest = function () { return { open: () => null, send: () => null }; }
 globalThis.Worker = function () { };
 
-function DumpMissingPropertiesBase() { }
+export function DumpMissingPropertiesBase() { }
 DumpMissingPropertiesBase.prototype = new Proxy({}, {
     get(target, prop, receiver) {
         console.log("PROP", prop.toString());
@@ -28,12 +28,16 @@ function _GetElementConstructor(tagName) {
             return globalThis.HTMLHtmlElement;
         case "body":
             return globalThis.HTMLBodyElement;
+        case "b":
+        case "main":
+            return globalThis.HTMLElement;
         case "div":
             return globalThis.HTMLDivElement;
         case "hr":
             return globalThis.HTMLHRElement;
         case "h1":
         case "h2":
+        case "h3":
             return globalThis.HTMLHeadingElement;
         case "li":
             return globalThis.HTMLLIElement;
@@ -41,12 +45,20 @@ function _GetElementConstructor(tagName) {
             return globalThis.HTMLOListElement;
         case "span":
             return globalThis.HTMLSpanElement;
+        case "p":
+            return globalThis.HTMLParagraphElement;
         case "a":
             return globalThis.HTMLAnchorElement;
+        case "input":
+            return globalThis.HTMLInputElement;
+        case "img":
+            return globalThis.HTMLImageElement;
         case "script":
             return globalThis.HTMLScriptElement;
         case "iframe":
             return globalThis.HTMLIFrameElement;
+        case "canvas":
+            return globalThis.HTMLCanvasElement;
         case "react":
             return globalThis.HTMLUnknownElement;
     }
@@ -55,9 +67,31 @@ function _GetElementConstructor(tagName) {
 }
 
 globalThis.EventTarget = class {
-    dispatchEvent() { }
-    addEventListener() { }
-    removeEventListener() { }
+    dispatchEvent(event) {
+        if (event.type === "react-invokeguardedcallback") {
+            if (this._react_callback) {
+                for (let cb of this._react_callback) {
+                    cb(event);
+                }
+            }
+        }
+        return true;
+    }
+    addEventListener(type, listener) {
+        if (type === "react-invokeguardedcallback") {
+            if (!this._react_callback) {
+                this._react_callback = [];
+            }
+            this._react_callback.push(listener);
+        }
+    }
+    removeEventListener(type, listener) {
+        if (type === "react-invokeguardedcallback") {
+            if (this._react_callback) {
+                this._react_callback = this._react_callback.filter(el => el !== listener);
+            }
+        }
+    }
 };
 globalThis.Node = class extends globalThis.EventTarget {
     static ELEMENT_NODE = 1;
@@ -82,6 +116,10 @@ globalThis.Node = class extends globalThis.EventTarget {
     }
     removeChild(child) {
         this.childNodes = this.childNodes.filter(node => node !== child);
+    }
+    insertBefore(childName, ref) {
+        let idx = this.childNodes.indexOf(ref);
+        this.childNodes.splice(idx, 0, childName);
     }
     get firstChild() {
         const nodes = this.childNodes;
@@ -117,12 +155,13 @@ globalThis.Element = class extends globalThis.Node {
         super();
 
         this.tagName = tagName.toUpperCase();
+        this.nodeName = tagName.toUpperCase();
         this[Symbol.toStringTag] = _GetElementConstructor(tagName).name;
     }
     get nodeType() { return Node.ELEMENT_NODE; };
     get namespaceURI() { return "http://www.w3.org/1999/xhtml"; }
     getAttribute() { return null; }
-    setAttribute() { }
+    setAttribute(key, val) { this[key] = val; }
     get classList() {
         return {
             add: () => null,
@@ -146,19 +185,47 @@ globalThis.Element = class extends globalThis.Node {
         return elements[elements.length - 1];
     }
     get style() {
-        return {};
+        let self = this;
+        return {
+            getPropertyValue(prop) { },
+        };
+    }
+    getBoundingClientRect() {
+        return {
+            x: 100,
+            y: 100,
+            width: 100,
+            height: 100,
+            top: 100,
+            right: 200,
+            bottom: 200,
+            left: 100,
+        };
     }
     dataset = {};
 };
-globalThis.HTMLElement = class extends globalThis.Element { };
+globalThis.HTMLElement = class extends globalThis.Element {
+    contentEditable = false;
+};
 globalThis.HTMLHtmlElement = class extends globalThis.HTMLElement { };
 globalThis.HTMLAnchorElement = class extends globalThis.HTMLElement { };
 globalThis.HTMLDivElement = class extends globalThis.HTMLElement { };
+globalThis.HTMLParagraphElement = class extends globalThis.HTMLElement { };
 globalThis.HTMLHRElement = class extends globalThis.HTMLElement { };
 globalThis.HTMLHeadingElement = class extends globalThis.HTMLElement { };
 globalThis.HTMLBodyElement = class extends globalThis.HTMLElement { };
 globalThis.HTMLIFrameElement = class extends globalThis.HTMLElement { };
 globalThis.HTMLScriptElement = class extends globalThis.HTMLElement { };
+globalThis.HTMLInputElement = class extends globalThis.HTMLElement { };
+globalThis.HTMLImageElement = class extends globalThis.HTMLElement { };
+globalThis.HTMLCanvasElement = class extends globalThis.HTMLElement {
+    getContext() {
+        return {
+            fillRect() { },
+        };
+    }
+    toDataURL() { return "data://"; }
+};
 globalThis.HTMLUnknownElement = class extends globalThis.HTMLElement { };
 globalThis.HTMLLIElement = class extends globalThis.HTMLElement { };
 globalThis.HTMLOListElement = class extends globalThis.HTMLElement { };
@@ -171,6 +238,12 @@ globalThis.Event = class {
     initEvent() { }
 };
 globalThis.UIEvent = class extends globalThis.Event { };
+
+globalThis.URL = class {
+    get hostname() {
+        return "example.com";
+    }
+};
 
 globalThis.fetch = function () {
     return new Promise(function () { });
@@ -185,6 +258,12 @@ globalThis.localStorage = {
     getItem: () => null,
     setItem: () => null,
 };
+
+globalThis.matchMedia = function () {
+    return {
+        matches: false,
+    };
+}
 
 globalThis.location = {
     host: "example.com",
@@ -211,6 +290,7 @@ globalThis.document = {
         let constructor = _GetElementConstructor(tagName);
         return new (constructor)(tagName);
     },
+    activeElement: null,
 };
 
 globalThis.document.appendChild(globalThis.document.documentElement);
