@@ -20,6 +20,10 @@ import defaultDispatcher from "matrix-react-sdk/src/dispatcher/dispatcher";
 import DMRoomMap from "matrix-react-sdk/src/utils/DMRoomMap";
 import FakeMatrixClient from "./FakeMatrixClient.js";
 
+import { setMissingEntryGenerator } from "matrix-react-sdk/src/languageHandler";
+
+setMissingEntryGenerator(s => s.split("|").at(-1));
+
 const ROOM_VERSION = 6;
 
 let client = new FakeMatrixClient;
