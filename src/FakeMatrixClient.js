@@ -12,6 +12,11 @@ export default class FakeMatrixClient extends EventEmitter {
     room = null;
     unstableClientRelationAggregation = true;
 
+    constructor() {
+        super();
+        this.setMaxListeners(500);
+    }
+
     isGuest() { return false; }
     isUserIgnored() { return false; }
     getUserId() { return "@user:example.org"; }
