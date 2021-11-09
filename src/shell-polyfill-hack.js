@@ -38,6 +38,8 @@ if (!("window" in globalThis)) {
                 return globalThis.HTMLDivElement;
             case "hr":
                 return globalThis.HTMLHRElement;
+            case "br":
+                return globalThis.HTMLBRElement;
             case "h1":
             case "h2":
             case "h3":
@@ -52,6 +54,8 @@ if (!("window" in globalThis)) {
                 return globalThis.HTMLParagraphElement;
             case "a":
                 return globalThis.HTMLAnchorElement;
+            case "button":
+                return globalThis.HTMLButtonElement;
             case "input":
                 return globalThis.HTMLInputElement;
             case "img":
@@ -190,7 +194,8 @@ if (!("window" in globalThis)) {
         get style() {
             let self = this;
             return {
-                getPropertyValue(prop) { },
+                getPropertyValue() { },
+                setProperty() { },
             };
         }
         getBoundingClientRect() {
@@ -209,17 +214,20 @@ if (!("window" in globalThis)) {
     };
     globalThis.HTMLElement = class extends globalThis.Element {
         contentEditable = false;
+        focus() { }
     };
     globalThis.HTMLHtmlElement = class extends globalThis.HTMLElement { };
     globalThis.HTMLAnchorElement = class extends globalThis.HTMLElement { };
     globalThis.HTMLDivElement = class extends globalThis.HTMLElement { };
     globalThis.HTMLParagraphElement = class extends globalThis.HTMLElement { };
     globalThis.HTMLHRElement = class extends globalThis.HTMLElement { };
+    globalThis.HTMLBRElement = class extends globalThis.HTMLElement { };
     globalThis.HTMLHeadingElement = class extends globalThis.HTMLElement { };
     globalThis.HTMLBodyElement = class extends globalThis.HTMLElement { };
     globalThis.HTMLIFrameElement = class extends globalThis.HTMLElement { };
     globalThis.HTMLScriptElement = class extends globalThis.HTMLElement { };
     globalThis.HTMLInputElement = class extends globalThis.HTMLElement { };
+    globalThis.HTMLButtonElement = class extends globalThis.HTMLElement { };
     globalThis.HTMLImageElement = class extends globalThis.HTMLElement { };
     globalThis.HTMLCanvasElement = class extends globalThis.HTMLElement {
         getContext() {
@@ -242,6 +250,15 @@ if (!("window" in globalThis)) {
     };
     globalThis.UIEvent = class extends globalThis.Event { };
 
+    globalThis.Range = class {
+        setStart() { }
+        collapse() { }
+    };
+    globalThis.Selection = class {
+        removeAllRanges() { }
+        addRange() { }
+    };
+
     globalThis.URL = class {
         get hostname() {
             return "example.com";
@@ -261,6 +278,7 @@ if (!("window" in globalThis)) {
         getItem: () => null,
         setItem: () => null,
     };
+    globalThis.sessionStorage = globalThis.localStorage;
 
     globalThis.matchMedia = function () {
         return {
@@ -293,6 +311,8 @@ if (!("window" in globalThis)) {
             let constructor = _GetElementConstructor(tagName);
             return new (constructor)(tagName);
         },
+        createRange: () => new globalThis.Range,
+        getSelection: () => new globalThis.Selection,
         activeElement: null,
     };
 

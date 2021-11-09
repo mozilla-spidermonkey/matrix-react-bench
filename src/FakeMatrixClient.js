@@ -20,7 +20,14 @@ export default class FakeMatrixClient extends EventEmitter {
     decryptEventIfNeeded() { return Promise.resolve(); }
     getPushActionsForEvent() { return { notify: false, tweaks: {} }; }
     isRoomEncrypted() { return false; }
-    getRoom() { return this.room; }
+    getRoom(roomid) {
+        if (this.room) {
+            if (roomid === this.room.name) {
+                return this.room;
+            }
+        }
+        return null;
+    }
     getCapabilities() {
         return Promise.resolve({
             ["m.room_versions"]: {
@@ -40,7 +47,7 @@ export default class FakeMatrixClient extends EventEmitter {
     }
     getSyncStateData() { return null; }
     get sessionStore() {
-        return { store: globalThis.localStorage };
+        return { store: globalThis.sessionStorage };
     }
     get pushRules() {
         return { global: {} };
@@ -53,4 +60,6 @@ export default class FakeMatrixClient extends EventEmitter {
     }
     async setRoomReadMarkers() { }
     getPublicisedGroups() { return Promise.resolve({ users: {} }); }
+    stopPeeking() { }
+    isCryptoEnabled() { return false; }
 }

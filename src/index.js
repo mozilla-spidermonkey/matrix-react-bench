@@ -13,7 +13,6 @@ import { PendingEventOrdering } from "matrix-js-sdk";
 import * as ContentHelpers from 'matrix-js-sdk/src/content-helpers';
 
 import MatrixClientContext from "matrix-react-sdk/src/contexts/MatrixClientContext";
-import RoomContext from "matrix-react-sdk/src/contexts/RoomContext";
 import RoomView from "matrix-react-sdk/src/components/structures/RoomView";
 import ResizeNotifier from "matrix-react-sdk/src/utils/ResizeNotifier";
 import defaultDispatcher from "matrix-react-sdk/src/dispatcher/dispatcher";
@@ -87,11 +86,12 @@ client.room.addLiveEvents([
         unsigned: {},
     }),
 ]);
+client.room.updateMyMembership("join");
 
 defaultDispatcher.dispatch({
     action: "view_room",
     room_id,
-});
+}, true);
 
 let resizeNotifier = new ResizeNotifier;
 let props = {
@@ -101,7 +101,6 @@ let props = {
 };
 
 let elem = React.createElement(RoomView, props, null);
-elem = React.createElement(RoomContext.Provider, { value: {} }, elem);
 elem = React.createElement(MatrixClientContext.Provider, { value: client }, elem);
 
 let target = document.createElement("div");
