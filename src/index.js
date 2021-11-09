@@ -108,5 +108,8 @@ let target = document.createElement("div");
 document.body.appendChild(target);
 ReactDOM.render(elem, target);
 
-drainJobQueue();
-DumpDOMTree(target);
+// In jsshell, drain the job/promise queue and render to console instead
+if ("drainJobQueue" in globalThis) {
+    drainJobQueue();
+    DumpDOMTree(target);
+}
