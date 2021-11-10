@@ -30,7 +30,10 @@ MatrixClientPeg.matrixClient = client;
 
 DMRoomMap.makeShared().start();
 
+let event_ts = Date.now();
+
 let user_id = "@user:example.org";
+let user2_id = "@other:example.org";
 let room_id = "!AAAAAAAAAAAA:example.org";
 let room_opts = {
     pendingEventOrdering: PendingEventOrdering.Detached,
@@ -47,7 +50,7 @@ client.room.addLiveEvents([
         },
         sender: user_id,
         room_id,
-        origin_server_ts: 1,
+        origin_server_ts: event_ts,
         unsigned: {},
         state_key: "",
     }),
@@ -60,21 +63,22 @@ client.room.addLiveEvents([
         },
         sender: user_id,
         room_id,
-        origin_server_ts: 1,
+        origin_server_ts: event_ts,
         unsigned: {},
-        state_key: user_id
+        state_key: user_id,
     }),
     new MatrixEvent({
         event_id: "$102:localhost",
-        type: EventType.RoomHistoryVisibility,
+        type: EventType.RoomMember,
         content: {
-            history_visibility: "world_readable",
+            displayname: "other",
+            membership: "join",
         },
-        sender: user_id,
+        sender: user2_id,
         room_id,
-        origin_server_ts: 1,
+        origin_server_ts: event_ts,
         unsigned: {},
-        state_key: "",
+        state_key: user2_id,
     }),
     new MatrixEvent({
         event_id: "$200:localhost",
@@ -82,7 +86,16 @@ client.room.addLiveEvents([
         content: ContentHelpers.makeTextMessage("Room test message"),
         sender: user_id,
         room_id,
-        origin_server_ts: 1,
+        origin_server_ts: event_ts,
+        unsigned: {},
+    }),
+    new MatrixEvent({
+        event_id: "$201:localhost",
+        type: EventType.RoomMessage,
+        content: ContentHelpers.makeTextMessage("Reply test message"),
+        sender: user2_id,
+        room_id,
+        origin_server_ts: event_ts,
         unsigned: {},
     }),
 ]);
