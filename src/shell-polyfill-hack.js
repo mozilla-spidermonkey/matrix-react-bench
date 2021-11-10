@@ -22,7 +22,7 @@ if (!("window" in globalThis)) {
     globalThis.addEventListener = () => null;
     globalThis.removeEventListener = () => null;
 
-    globalThis.XMLHttpRequest = function () { return { open: () => null, send: () => null }; }
+    globalThis.XMLHttpRequest = function () { }
     globalThis.Worker = function () { };
 
     function _GetElementConstructor(tagName) {

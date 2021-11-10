@@ -8,19 +8,23 @@ module.exports = {
         rules: [
             {
                 test: /RecorderWorklet\.ts$/,
-                type: "javascript/auto",
-                use: [
-                    {
-                        loader: "worklet-loader",
-                    },
-                    {
-                        loader: "babel-loader",
-                    },
-                ],
+                loader: "null-loader",
             },
             {
                 test: /\.worker\.ts$/,
-                loader: "worker-loader",
+                loader: "null-loader",
+            },
+            {
+                test: /Worker.min.js$/,
+                loader: "null-loader",
+            },
+            {
+                test: /PosthogAnalytics\.ts$/,
+                loader: "null-loader",
+            },
+            {
+                test: /BlurhashEncoder\.ts$/,
+                loader: "null-loader",
             },
             {
                 test: /\.(js|jsx|ts|tsx)$/,
@@ -28,12 +32,12 @@ module.exports = {
             },
             {
                 test: /\.(png|svg|woff2)$/,
-                loader: "file-loader",
+                loader: "null-loader",
             },
             {
                 test: /\.(wasm)$/,
                 type: "javascript/auto",
-                loader: "file-loader",
+                loader: "null-loader",
             },
         ]
     },
