@@ -52,10 +52,13 @@ function render_room(room_id) {
     }, true);
 
     let resizeNotifier = new ResizeNotifier;
+    let forwardRef = React.createRef();
     let props = {
         mxClient: client,
         threepidInvite: null,
         resizeNotifier,
+        key: room_id,
+        ref: forwardRef,
     };
 
     let elem = React.createElement(RoomView, props, null);
