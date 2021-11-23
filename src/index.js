@@ -35,10 +35,16 @@ MatrixClientPeg.matrixClient = client;
 // using the top-level entry point and instead focus on RoomView.
 DMRoomMap.makeShared().start();
 
+let room1_id = "!AAAAAAAAAAAA:example.org";
+let room2_id = "!BBBBBBBBBBBB:example.org";
+
+let rooms = {};
+rooms[room1_id] = synthesize_room(room1_id);
+rooms[room2_id] = synthesize_room(room2_id);
+
 // Demo render of a room.
-{
-    let room_id = "!AAAAAAAAAAAA:example.org";
-    client.room = synthesize_room(room_id);
+function render_room(room_id) {
+    client.room = rooms[room_id];
 
     defaultDispatcher.dispatch({
         action: "view_room",
@@ -54,8 +60,11 @@ DMRoomMap.makeShared().start();
 
     let elem = React.createElement(RoomView, props, null);
     elem = React.createElement(MatrixClientContext.Provider, { value: client }, elem);
+
     ReactDOM.render(elem, target);
 }
+
+render_room(room1_id);
 
 // In jsshell, drain the job/promise queue and render to console instead
 if ("drainJobQueue" in globalThis) {
