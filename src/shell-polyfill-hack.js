@@ -133,7 +133,7 @@ if (!("window" in globalThis)) {
             if (nodes.length === 0) {
                 return null;
             }
-            return elements[0];
+            return nodes[0];
         }
         get lastChild() {
             const nodes = this.childNodes;
@@ -190,6 +190,10 @@ if (!("window" in globalThis)) {
                 return null;
             }
             return elements[elements.length - 1];
+        }
+        getElementsByTagName(tagName) {
+            tagName = tagName.toUpperCase();
+            return this.childNodes.filter(n => n.tagName === tagName);
         }
         get style() {
             let self = this;
