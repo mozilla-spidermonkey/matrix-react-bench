@@ -67,4 +67,5 @@ export default class FakeMatrixClient extends EventEmitter {
     getPublicisedGroups() { return Promise.resolve({ users: {} }); }
     stopPeeking() { }
     isCryptoEnabled() { return false; }
+    sendTyping() { return Promise.resolve(); }
 }
