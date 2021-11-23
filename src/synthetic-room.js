@@ -97,7 +97,9 @@ export function synthesize_room(room_id) {
         new MatrixEvent({
             event_id: next_event_id(),
             type: EventType.RoomMessage,
-            content: ContentHelpers.makeTextMessage("I see you'll fit right in"),
+            content: ContentHelpers.makeHtmlMessage(
+                "I see you'll fit right in, other",
+                `I see you'll fit right in, <a href="https://matrix.to/#/${user2_id}">other</a>`),
             sender: user1_id,
             room_id,
             origin_server_ts: event_ts,
