@@ -46,8 +46,6 @@ export default class FakeMatrixClient extends EventEmitter {
     getAccountData(type) {
         if (type === "im.vector.web.settings") {
             return accountSettings;
-        } else {
-            console.log("Account Data", type);
         }
     }
     getSyncStateData() { return null; }
