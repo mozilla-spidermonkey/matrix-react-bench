@@ -67,7 +67,39 @@ function render_room(room_id) {
     ReactDOM.render(elem, target);
 }
 
-render_room(room1_id);
+let old_console = console.log;
+console.log = function() {};
+
+let render_i = 0;
+let render_cnt = 200;
+let results = [];
+
+function rerender() {
+    if ((render_i % 50) === 0) {
+        results.push([render_i, Date.now()]);
+    }
+
+    if (render_i < render_cnt) {
+        render_i++
+        let room_id = (render_i & 1) ? room2_id : room1_id;
+        render_room(room_id);
+        setTimeout(rerender, 0);
+    } else {
+        results.push([render_i, Date.now()]);
+
+        let [prev_i, prev_t] = results.shift();
+        while (results.length > 0) {
+            let [i, t] = results.shift();
+            let di = (i - prev_i);
+            let dt = (t - prev_t);
+            [prev_i, prev_t] = [i, t];
+            old_console("Finished", di, "iterations at", (dt/di), "ms each.");
+        }
+    }
+}
+
+let startTime = Date.now();
+setTimeout(rerender, 0);
 
 // In jsshell, drain the job/promise queue and render to console instead
 if ("drainJobQueue" in globalThis) {
