@@ -103,6 +103,8 @@ setTimeout(rerender, 0);
 
 // In jsshell, drain the job/promise queue and render to console instead
 if ("drainJobQueue" in globalThis) {
+    console.log = old_console;
+    render_room(room1_id);
     drainJobQueue();
     DumpDOMTree(target);
 }
