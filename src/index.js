@@ -85,9 +85,8 @@ function rerender() {
         render_room(room_id);
         setTimeout(rerender, 0);
     } else {
-        results.push([render_i, Date.now()]);
-
         let timings = [];
+
         let [prev_i, prev_t] = results.shift();
         while (results.length > 0) {
             let [i, t] = results.shift();
@@ -95,7 +94,7 @@ function rerender() {
             let dt = (t - prev_t);
             let res = dt/di;
             [prev_i, prev_t] = [i, t];
-            timings.push(res);
+            timings.push([i, res]);
             old_console("Finished", di, "iterations at", res, "ms each.");
         }
 
