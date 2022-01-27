@@ -87,14 +87,23 @@ function rerender() {
     } else {
         results.push([render_i, Date.now()]);
 
+        let timings = [];
         let [prev_i, prev_t] = results.shift();
         while (results.length > 0) {
             let [i, t] = results.shift();
             let di = (i - prev_i);
             let dt = (t - prev_t);
+            let res = dt/di;
             [prev_i, prev_t] = [i, t];
-            old_console("Finished", di, "iterations at", (dt/di), "ms each.");
+            timings.push(res);
+            old_console("Finished", di, "iterations at", res, "ms each.");
         }
+
+        // Send results to Raptor-Browsertime
+        window.sessionStorage.setItem(
+            'benchmark_results',
+            JSON.stringify({"matrix-react-bench": timings})
+        );
     }
 }
 
