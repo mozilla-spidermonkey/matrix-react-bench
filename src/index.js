@@ -38,14 +38,12 @@ DMRoomMap.makeShared().start();
 let room1_id = "!AAAAAAAAAAAA:example.org";
 let room2_id = "!BBBBBBBBBBBB:example.org";
 
-let rooms = {};
-rooms[room1_id] = synthesize_room(room1_id);
-rooms[room2_id] = synthesize_room(room2_id);
+client.rooms = {};
+client.rooms[room1_id] = synthesize_room(room1_id);
+client.rooms[room2_id] = synthesize_room(room2_id);
 
 // Demo render of a room.
 function render_room(room_id) {
-    client.room = rooms[room_id];
-
     defaultDispatcher.dispatch({
         action: "view_room",
         room_id,
