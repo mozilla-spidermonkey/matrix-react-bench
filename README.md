@@ -50,3 +50,20 @@ throwing an exception to the top level. When making changes, it is worth dumping
 the mock DOM tree and seeing if it is reasonable. The `src/DumpDOMTree.js` code
 can help out here. Note that Promise microtasks need to be flushed for an issued
 render to complete.
+
+Building an unminified version
+------------------------------
+It's possible to run with the webpack mode set to 'development' however that
+causes react to do a bunch of additional checks which will change the
+performance characteristics. Unfortuantely, the react npm package seems to
+contain a preminified version that's used for production. To work around this
+it's necessary to rebuild the 'react' package from source. This can be done by
+cloning https://github.com/facebook/react (checking out
+46b68eaf626f924093952125bd75ba16df0fe204 because the v17.0.2 seems wrong
+(https://github.com/facebook/react/issues/24079)) and running `yarn build
+--pretty` to avoid the minification process. Then run `npm link` in the
+resulting `build/node_modules/react` and `build/node_modules/react-dom`
+directories. This will install the unminfied versions globally.  This version
+can then be used by `matrix-react-bench` by running `npm link react react-dom`
+in the `matrix-react-bench` directory. Finally, add `optimization: { minimize:
+false }` to webpack.config.js
