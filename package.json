@@ -8,7 +8,7 @@
     "build": "webpack"
   },
   "author": "Ted Campbell <tcampbell@mozilla.com>",
-  "license": "ISC",
+  "license": "MPL-2.0",
   "devDependencies": {
     "@babel/core": "^7.15.8",
     "@babel/plugin-proposal-decorators": "^7.15.8",
